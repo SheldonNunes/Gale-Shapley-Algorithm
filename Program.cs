@@ -93,7 +93,7 @@ namespace GaleShapely
 
 			public static void Main (string[] args)
 			{
-				Queue<Man> men = new Queue<Man> ();
+				List<Man> men = new List<Man> ();
 				List<Person> women = new List<Person> ();
 				int num = 0;
 				int count = 0;
@@ -104,65 +104,47 @@ namespace GaleShapely
 					if (line.Length == 1) {
 						if (count > 0) {
 							Console.WriteLine ("Instance " + count + ":");
-							int cnt = 1;
-							while (cnt <= num) {
-								for (int i = 0; i < num; i++) {
-									if (women [i].Partner.name == cnt) {
-										Console.WriteLine (women [i].Partner.Partner.name);
-										cnt++;
-									}
-								}
+							for (int i = 0; i < num; i++) {
+								Console.WriteLine (men [i].Partner.name);
 							}
+						
 						}
-
 						count++;
-
-
 						num = Convert.ToInt32 (line);
 						men.Clear();
 						women.Clear();
-						//Hello my name is Sheldon
 
 						//Forms the Preference List for Men
 						for (int i = 0; i < num; i++) {
 							line = Console.ReadLine ();
-							men.Enqueue (new Man (line, i+1));
-
-
-
+							men.Add (new Man (line, i+1));
 						}
 						//Forms the Preference List for Women
 						for (int i = 0; i < num; i++) {
 							line = Console.ReadLine ();
 							women.Add (new Person (line, i+1));
-
-
-
 						}
+						Man currentMan = null;
 						int freemen = num;
 						while (freemen != 0) {
-							Man currentMan = men.Peek ();
-
-
-							int choice = Convert.ToInt32 (currentMan.prefQueue.Peek ());
+							for (int i = 0; i < num; i++) {
+								if (men [i].Married == false) {
+									currentMan = men [i];
+									break;
+								}
+							}
+							int choice = Convert.ToInt32 (currentMan.prefQueue.Dequeue());
 							if (women [choice - 1].Married == false) {
-
 								currentMan.GetMarried (women [choice - 1]);
-								currentMan.prefQueue.Dequeue ();
-								men.Dequeue();
 								freemen--;
 							} else {
+								Console.WriteLine ("Conflict: " + currentMan.prefQueue.Peek());
 								if (women [choice - 1].Prefers (currentMan)) {
-									Man test = (Man)women [choice - 1].GetMPartner ();
-									men.Enqueue (test);
+									Console.WriteLine ("Prefers New Man");
 									women [choice - 1].GetDivorced ();
 									currentMan.GetMarried (women [choice - 1]);
-									currentMan.prefQueue.Dequeue ();
-									men.Dequeue ();
 
 
-								} else {
-									currentMan.prefQueue.Dequeue ();
 								}
 							}
 
@@ -177,16 +159,9 @@ namespace GaleShapely
 
 				}
 				Console.WriteLine ("Instance " + count + ":");
-				int cnt2 = 1;
-
-				while (cnt2 <= num) {
 					for (int i = 0; i < num; i++) {
-						if (women [i].Partner.name == cnt2) {
-							Console.WriteLine (women [i].Partner.Partner.name);
-							cnt2++;
-						}
+						Console.WriteLine (men [i].Partner.name);
 					}
-				}
 			}
 
 		}
